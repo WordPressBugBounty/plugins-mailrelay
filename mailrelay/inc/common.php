@@ -16,7 +16,7 @@ if ( ! function_exists( 'mailrelay_api_request' ) ) {
 			$mailrelay_data = mailrelay_data();
 		}
 
-		$url = 'https://' . $mailrelay_data['host'] . '.ipzmarketing.com/api/v1/' . $url;
+		$url = 'https://' . $mailrelay_data['host'] . '.' . MAILRELAY_BASE_DOMAIN . '/api/v1/' . $url;
 
 		$args = array_merge_recursive(
 			$args,
@@ -31,11 +31,14 @@ if ( ! function_exists( 'mailrelay_api_request' ) ) {
 
 		$response = wp_remote_request( $url, $args );
 
+		$headers = wp_remote_retrieve_headers( $response );
+
 		if ( is_wp_error( $response ) ) {
 			return array(
 				'wp_error'      => true,
 				'error_message' => $response->get_error_message(),
 				'response'      => $response,
+				'headers'       => $headers,
 			);
 		}
 
@@ -48,6 +51,7 @@ if ( ! function_exists( 'mailrelay_api_request' ) ) {
 			'code'     => $code,
 			'body'     => $body,
 			'response' => $response,
+			'headers'  => $headers,
 		);
 	}
 }
